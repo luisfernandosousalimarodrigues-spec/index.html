@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BetBoy</title>
+<style>
+:root{--bg:#0c0d10;--p:#14161b;--p2:#1b1e25;--ln:#2a2e38;--ouro:#c9a24b;--m:#ece7da;--mut:#8d93a1;--v:#a82f36;--vd:#2f7d5b}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--m);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;background:rgba(12,13,16,.95);border-bottom:1px solid var(--ln)}
+h1{font:600 1rem Georgia,serif;letter-spacing:.22em;color:var(--ouro);margin:0}
+h2{font:600 1.6rem Georgia,serif;margin:4px 0 10px}
+#placar{display:flex;gap:6px}
+.pill{border:1px solid var(--ln);border-radius:8px;padding:5px 10px;font-size:.8rem;color:var(--mut)}
+.pill b{color:var(--m);font-size:.95rem;margin-left:2px}
+.pill.on{border-color:var(--ouro)}.pill.on b{color:var(--ouro)}
+.aviso{font-size:.72rem;text-align:center;padding:8px 12px;color:var(--mut)}
+main{max-width:520px;margin:0 auto;padding:8px 16px 40px}
+.modo{display:flex;border:1px solid var(--ln);border-radius:8px;overflow:hidden}
+.modo button{flex:1;padding:12px;background:none;border:0;color:var(--mut)}
+.modo .sel{background:var(--p2);color:var(--ouro);font-weight:600}
+.dica,.tab{font-size:.78rem;color:var(--mut);text-align:center;margin:10px 0}
+.lista{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;justify-content:space-between;align-items:center;text-align:left;padding:16px;background:var(--p);border:1px solid var(--ln);border-left:3px solid var(--ouro);border-radius:8px}
+.item b{display:block;font:600 1.15rem Georgia,serif}
+.item small{color:var(--mut)}.item em{font-style:normal;color:var(--ouro);font-size:1.4rem}
+.item.off{opacity:.4;border-left-color:var(--ln)}
+.voltar{background:none;border:0;color:var(--ouro);padding:8px 0}
+.visor{margin:12px 0;min-height:110px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:600 3rem Georgia,serif;background:var(--p);border:1px solid var(--ouro)}
+.visor.peq{font-size:1.6rem}
+.visor.vermelho{background:var(--v)}.visor.preto{background:#000}.visor.zero{background:var(--vd)}
+.opc{display:flex;gap:8px;margin-bottom:8px}
+.op{flex:1;padding:12px 4px;border-radius:8px;border:1px solid var(--ln);background:var(--p);font-weight:600}
+.op small{display:block;font-weight:400;opacity:.8}
+.op.vermelho{background:var(--v)}.op.preto{background:#000}.op.zero{background:var(--vd)}
+.op.sel{border-color:var(--ouro);box-shadow:0 0 0 1px var(--ouro)}
+.bichos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.bichos .op{padding:8px 2px;font-size:.85rem}
+.op i{display:block;font-style:normal;color:var(--ouro);font-size:.72rem}
+label{display:block;margin:14px 0 6px;color:var(--mut);font-size:.85rem}
+input{width:100%;padding:12px;font-size:1.1rem;border-radius:8px;border:1px solid var(--ln);background:var(--p);color:var(--m)}
+.fichas{display:flex;gap:8px;margin-top:8px}
+.fichas button{flex:1;padding:10px 0;border-radius:8px;background:none;border:1px solid var(--ln);color:var(--mut)}
+.acao{width:100%;margin-top:14px;padding:15px;border-radius:8px;border:0;background:var(--ouro);color:#14110a;font-weight:700;font-size:1.05rem}
+.acao:disabled{opacity:.45}
+.msg{min-height:1.6em;margin-top:12px;text-align:center;font-weight:600}
+.reset{display:block;margin:28px auto 0;background:none;border:1px solid var(--ln);color:var(--mut);border-radius:8px;padding:8px 14px}
+.mesa{background:#10231b;border:1px solid var(--ln);border-radius:12px;padding:12px;margin:8px 0}
+.lbl{color:var(--mut);font-size:.85rem}.lbl b{color:var(--ouro);margin-left:6px}
+.mao{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:96px;margin:8px 0 14px}
+.carta{position:relative;width:54px;height:80px;border-radius:6px;background:#f4efe3;color:#15161a;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 1.15rem Georgia,serif;box-shadow:0 2px 6px #0008;animation:pop .22s;transition:transform .15s}
+.carta span{font-size:1.4rem}.carta.r{color:#9e1f27}
+.verso{background:repeating-linear-gradient(45deg,#1d2a44 0 6px,#16203a 6px 12px);border:3px solid #f4efe3}
+.carta.seg{transform:translateY(-10px);box-shadow:0 0 0 2px var(--ouro)}
+.carta.seg::after{content:'MANTER';position:absolute;bottom:-18px;font:700 .55rem system-ui;color:var(--ouro)}
+.pc{background:none;border:0;padding:0}
+.acoes{display:flex;gap:8px;margin-top:12px}
+.acoes button{flex:1;padding:14px 0;border-radius:8px;border:1px solid var(--ouro);background:none;font-weight:600}
+.acoes button:disabled{opacity:.4}
+#ov{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+#ov p{color:var(--mut);margin:0}
+.heroi{display:flex;align-items:center;gap:12px;margin:14px 0}
+.heroi svg{width:88px;height:88px;flex:none;shape-rendering:crispEdges;animation:bob 1.4s steps(1) infinite}
+.heroi p{position:relative;margin:0;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--p);font-size:.85rem;color:var(--m)}
+.heroi p::before{content:'';position:absolute;left:-6px;top:50%;width:10px;height:10px;margin-top:-5px;background:var(--p);border-left:1px solid var(--ln);border-bottom:1px solid var(--ln);transform:rotate(45deg)}
+@keyframes bob{50%{transform:translateY(-3px)}}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><h1>BETBOY</h1><div id="placar"></div></header>
+<div class="aviso">Jogo fictício, só para diversão. Nenhum dinheiro real envolvido. Apenas para maiores de 18 anos.</div>
+<main><section id="home"></section><section id="jogo" hidden></section></main>
+<div id="ov" hidden></div>
+<script>
+const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n);
+let P=[{n:'Jogador 1',s:1000},{n:'Jogador 2',s:1000}],modo=1,cur=0,saldo=1000,busy=0,atual=null;
+try{const j=JSON.parse(localStorage.getItem('cassino2'));if(j&&j.P&&j.P.length===2){P=j.P;modo=j.modo===2?2:1;cur=modo===2&&j.cur===1?1:0}}catch(e){}
+saldo=P[cur].s;
+function salvar(){P[cur].s=saldo;try{localStorage.setItem('cassino2',JSON.stringify({P,modo,cur}))}catch(e){}placar()}
+function placar(){$('#placar').innerHTML=(modo===2?P:[P[0]]).map((p,i)=>`<span class="pill${modo===2&&i===cur?' on':''}">${modo===2?p.n.replace('Jogador ','J'):'Saldo'} <b>${p.s}</b></span>`).join('')}
+function passar(){const k=atual,n=1-cur;P[cur].s=saldo;$('#ov').innerHTML=`<div><p>Passe o celular para</p><h2>${P[n].n}</h2><button class="acao" id="ok">Estou pronto</button></div>`;$('#ov').hidden=false;
+$('#ok').onclick=()=>{cur=n;saldo=P[cur].s;salvar();$('#ov').hidden=true;busy=0;abrir(null);if(k)abrir(k)}}
+const msg=t=>{$('#msg').textContent=t};
+const pagar=n=>{saldo+=n;salvar()};
+function pegar(){const v=Math.floor(+$('#bet').value);if(!(v>0))return msg('Digite um valor maior que zero.');if(v>saldo)return msg('Saldo insuficiente.');saldo-=v;salvar();return v}
+function fim(id){busy=0;const b=$('#'+id);if(b)b.disabled=false;if(saldo<1)msg($('#msg').textContent+' Acabaram as moedas: volte ao início e toque em Redefinir saldo.');if(modo===2)setTimeout(passar,2200)}
+const bet=()=>`<label for="bet">Valor da aposta</label><input id="bet" type="number" min="1" value="50" inputmode="numeric"><div class="fichas">${[10,50,100,'Tudo'].map(x=>`<button data-ch="${x}">${x}</button>`).join('')}</div>`;
+function sel(a,f){a.querySelectorAll('.op').forEach(b=>b.onclick=()=>{f(b.dataset.k);a.querySelectorAll('.op').forEach(x=>x.classList.toggle('sel',x===b))})}
+
+const RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'],ST='♠♥♦♣';
+const baralho=()=>{const d=[];for(const s of ST)for(const r of RK)d.push({r,s});for(let i=51;i>0;i--){const j=rnd(i+1);[d[i],d[j]]=[d[j],d[i]]}return d};
+const carta=(c,x='')=>`<div class="carta ${'♥♦'.includes(c.s)?'r':''} ${x}">${c.r}<span>${c.s}&#xFE0E;</span></div>`;
+const verso='<div class="carta verso"></div>';
+const val=m=>{let t=0,a=0;m.forEach(c=>{const i=RK.indexOf(c.r)+1;t+=i>10?10:i===1?(a++,11):i});while(t>21&&a--)t-=10;return t};
+
+/* ---------- Roleta ---------- */
+function roleta(a){let cor=null;
+a.innerHTML=`<div class="visor" id="v">?</div><div class="opc">${[['vermelho','Vermelho','2x'],['zero','Zero','14x'],['preto','Preto','2x']].map(([k,n,x])=>`<button class="op ${k}" data-k="${k}">${n}<small>${x}</small></button>`).join('')}</div>${bet()}<button class="acao" id="go">Girar</button>`;
+sel(a,k=>cor=k);
+const cn=n=>n?n<8?'vermelho':'preto':'zero';
+$('#go').onclick=()=>{if(busy)return;if(!cor)return msg('Escolha uma cor.');const v=pegar();if(!v)return;busy=1;$('#go').disabled=true;msg('Girando...');
+const vis=$('#v'),t=setInterval(()=>{const n=rnd(15);vis.textContent=n;vis.className='visor '+cn(n)},90);
+setTimeout(()=>{clearInterval(t);const n=rnd(15),c=cn(n);vis.textContent=n;vis.className='visor '+c;
+if(c===cor){const g=v*(c==='zero'?14:2);pagar(g);msg('Você ganhou '+g+' moedas!')}else msg('Saiu '+c+'. Você perdeu '+v+'.');fim('go')},1800)}}
+
+/* ---------- Cara ou coroa ---------- */
+function moeda(a){let l=null;
+a.innerHTML=`<div class="visor" id="v">?</div><div class="opc">${['Cara','Coroa'].map(x=>`<button class="op" data-k="${x}">${x}</button>`).join('')}</div>${bet()}<button class="acao" id="go">Lançar</button>`;
+sel(a,k=>l=k);
+$('#go').onclick=()=>{if(busy)return;if(!l)return msg('Escolha cara ou coroa.');const v=pegar();if(!v)return;busy=1;$('#go').disabled=true;msg('Lançando...');
+const vis=$('#v'),t=setInterval(()=>vis.textContent=rnd(2)?'Cara':'Coroa',120);
+setTimeout(()=>{clearInterval(t);const r=rnd(2)?'Cara':'Coroa';vis.textContent=r;
+if(r===l){const g=Math.floor(v*1.9);pagar(g);msg('Acertou! Você ganhou '+g+' moedas.')}else msg('Deu '+r+'. Você perdeu '+v+'.');fim('go')},1200)}}
+
+/* ---------- Blackjack ---------- */
+function blackjack(a){let d,p,h,v;
+a.innerHTML=`<div class="mesa"><div class="lbl">Banca <b id="hb"></b></div><div class="mao" id="hm"></div><div class="lbl">Você <b id="pb"></b></div><div class="mao" id="pm"></div></div><div id="bj">${bet()}<button class="acao" id="go">Distribuir</button></div><div class="acoes" id="ac" hidden><button id="pd">Pedir</button><button id="pr">Parar</button><button id="db">Dobrar</button></div>`;
+const mostra=r=>{$('#hm').innerHTML=h.map((c,i)=>i===1&&!r?verso:carta(c)).join('');$('#pm').innerHTML=p.map(c=>carta(c)).join('');$('#pb').textContent=val(p);$('#hb').textContent=r?val(h):'';$('#db').disabled=p.length>2};
+const acaba=k=>{mostra(1);$('#ac').hidden=true;$('#bj').hidden=false;const m={bj:[2.5,'Blackjack! Paga 3 para 2.'],win:[2,'Você venceu!'],push:[1,'Empate: aposta devolvida.'],lose:[0,'A banca venceu.']}[k],g=Math.floor(v*m[0]);if(g)pagar(g);msg(m[1]+(g>v?' +'+(g-v):g?'':' -'+v));fim('go')};
+const parar=()=>{while(val(h)<17)h.push(d.pop());const x=val(p),y=val(h);acaba(y>21||x>y?'win':x===y?'push':'lose')};
+$('#go').onclick=()=>{if(busy)return;v=pegar();if(!v)return;busy=1;d=baralho();p=[d.pop(),d.pop()];h=[d.pop(),d.pop()];$('#bj').hidden=true;msg('');mostra(0);if(val(p)===21)acaba(val(h)===21?'push':'bj');else $('#ac').hidden=false};
+$('#pd').onclick=()=>{p.push(d.pop());mostra(0);if(val(p)>21)acaba('lose');else if(val(p)===21)parar()};
+$('#pr').onclick=parar;
+$('#db').onclick=()=>{if(saldo<v)return msg('Saldo insuficiente para dobrar.');saldo-=v;v*=2;salvar();p.push(d.pop());if(val(p)>21){mostra(0);acaba('lose')}else parar()}}
+
+/* ---------- Vídeo poker (par de valetes ou melhor) ---------- */
+function avaliar(m){const n=m.map(c=>RK.indexOf(c.r)+1).sort((x,y)=>x-y),fl=m.every(c=>c.s===m[0].s),cnt={};
+n.forEach(x=>cnt[x]=(cnt[x]||0)+1);const q=Object.values(cnt).sort((x,y)=>y-x),roy=n.join()==='1,10,11,12,13',seq=new Set(n).size===5&&(n[4]-n[0]===4||roy);
+if(seq&&fl)return roy?['Royal flush',250]:['Straight flush',50];
+if(q[0]===4)return['Quadra',25];if(q[0]===3&&q[1]===2)return['Full house',9];if(fl)return['Flush',6];if(seq)return['Sequência',4];if(q[0]===3)return['Trinca',3];if(q[0]===2&&q[1]===2)return['Dois pares',2];
+if(q[0]===2){const p=+Object.keys(cnt).find(k=>cnt[k]===2);if(p===1||p>=11)return['Par de valetes ou melhor',1]}return['Nada',0]}
+function poker(a){let d,m,s,v,f=0;
+a.innerHTML=`<div class="mao" id="pk"></div><div class="dica">Dê as cartas, toque nas que quer manter e troque as outras.</div><div class="tab">Par de valetes+ 1x · 2 pares 2x · Trinca 3x · Sequência 4x · Flush 6x · Full house 9x · Quadra 25x · Straight flush 50x · Royal 250x</div>${bet()}<button class="acao" id="go">Dar cartas</button>`;
+const mostra=()=>{$('#pk').innerHTML=m.map((c,i)=>`<button class="pc" data-h="${i}">${carta(c,s[i]?'seg':'')}</button>`).join('')};
+$('#pk').onclick=e=>{const b=e.target.closest('[data-h]');if(b&&f===1){s[b.dataset.h]^=1;mostra()}};
+$('#go').onclick=()=>{if(!f){v=pegar();if(!v)return;busy=1;d=baralho();m=[0,1,2,3,4].map(()=>d.pop());s=[0,0,0,0,0];f=1;mostra();$('#go').textContent='Trocar cartas';msg('Escolha quais cartas manter.')}
+else{m=m.map((c,i)=>s[i]?c:d.pop());mostra();s=[0,0,0,0,0];const[n,x]=avaliar(m);f=0;$('#go').textContent='Dar cartas';
+if(x){pagar(v*x);msg(n+'! '+(x>1?'Você ganhou '+v*(x-1)+' moedas.':'Aposta devolvida.'))}else msg('Sem jogo. Você perdeu '+v+'.');fim('go')}}}
+
+/* ---------- Jogo do bicho (25 grupos) ---------- */
+const BI=['Avestruz','Águia','Burro','Borboleta','Cachorro','Cabra','Carneiro','Camelo','Cobra','Coelho','Cavalo','Elefante','Galo','Gato','Jacaré','Leão','Macaco','Porco','Pavão','Peru','Touro','Tigre','Urso','Veado','Vaca'];
+const num=i=>String(i+1).padStart(2,'0');
+function bicho(a){let e=null;
+a.innerHTML=`<div class="visor peq" id="v">Escolha um grupo</div><div class="bichos">${BI.map((b,i)=>`<button class="op" data-k="${i}"><i>${num(i)}</i>${b}</button>`).join('')}</div>${bet()}<button class="acao" id="go">Sortear</button>`;
+sel(a,k=>e=+k);
+$('#go').onclick=()=>{if(busy)return;if(e===null)return msg('Escolha um grupo. Se ele sair, paga 18x.');const v=pegar();if(!v)return;busy=1;$('#go').disabled=true;msg('Sorteando...');
+const vis=$('#v'),t=setInterval(()=>{const i=rnd(25);vis.textContent=num(i)+' '+BI[i]},90);
+setTimeout(()=>{clearInterval(t);const r=rnd(25);vis.textContent=num(r)+' '+BI[r];
+if(r===e){pagar(v*18);msg('Deu '+BI[r]+'! Você ganhou '+v*18+' moedas.')}else msg('Deu '+BI[r]+'. Você perdeu '+v+'.');fim('go')},1600)}}
+
+/* ---------- Menu e navegação ---------- */
+const JOGOS={roleta:['Roleta','Vermelho ou preto paga 2x',roleta],blackjack:['Blackjack','Paga 3 para 2',blackjack],poker:['Poker','Vídeo poker, até 250x',poker],bicho:['Jogo do bicho','Acertou o grupo, paga 18x',bicho],moeda:['Cara ou coroa','Acertou, paga 1,9x',moeda]};
+function home(){$('#home').innerHTML=`<div class="modo"><button data-m="1" class="${modo===1?'sel':''}">1 jogador</button><button data-m="2" class="${modo===2?'sel':''}">2 jogadores</button></div><div class="heroi"><svg viewBox="0 0 16 16" role="img" aria-label="BetBoy, mascote do jogo"><rect x="5" y="1" width="6" height="1" fill="#a82f36"/><rect x="4" y="2" width="8" height="2" fill="#a82f36"/><rect x="3" y="4" width="10" height="1" fill="#c9a24b"/><rect x="4" y="5" width="8" height="5" fill="#e8b98a"/><rect x="3" y="6" width="1" height="2" fill="#e8b98a"/><rect x="12" y="6" width="1" height="2" fill="#e8b98a"/><rect x="4" y="6" width="3" height="2" fill="#0c0d10"/><rect x="9" y="6" width="3" height="2" fill="#0c0d10"/><rect x="7" y="6" width="2" height="1" fill="#0c0d10"/><rect x="5" y="6" width="1" height="1" fill="#5b6170"/><rect x="10" y="6" width="1" height="1" fill="#5b6170"/><rect x="6" y="9" width="4" height="1" fill="#7a2d2d"/><rect x="5" y="8" width="1" height="1" fill="#7a2d2d"/><rect x="10" y="8" width="1" height="1" fill="#7a2d2d"/><rect x="7" y="10" width="2" height="1" fill="#e8b98a"/><rect x="3" y="11" width="10" height="4" fill="#1b1e25"/><rect x="6" y="11" width="4" height="4" fill="#ece7da"/><rect x="7" y="11" width="2" height="3" fill="#a82f36"/><rect x="3" y="11" width="1" height="4" fill="#c9a24b"/><rect x="13" y="11" width="3" height="3" fill="#c9a24b"/><rect x="14" y="12" width="1" height="1" fill="#14110a"/></svg><p>${modo===2?'Cada um tem o seu saldo. Passe o celular depois de cada rodada.':'Fala, eu sou o BetBoy. Escolha uma mesa e boa sorte.'}</p></div><div class="lista">${Object.entries(JOGOS).map(([k,j])=>`<button class="item" data-j="${k}"><span><b>${j[0]}</b><small>${j[1]}</small></span><em>›</em></button>`).join('')}<button class="item off" disabled><span><b>Truco</b><small>Em breve</small></span></button></div><button class="reset" id="rs">Redefinir saldo</button>`;
+$('#rs').onclick=()=>{if(confirm('Voltar os saldos para 1000 moedas?')){P.forEach(p=>p.s=1000);saldo=P[cur].s;salvar()}}}
+function abrir(k){if(busy)return;atual=k;$('#home').hidden=!!k;$('#jogo').hidden=!k;if(!k){home();return}const j=JOGOS[k];
+$('#jogo').innerHTML=`<button class="voltar" id="vt">‹ Início</button><h2>${j[0]}</h2><div id="area"></div><div class="msg" id="msg"></div>`;
+$('#vt').onclick=()=>abrir(null);j[2]($('#area'))}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-j]');if(t)abrir(t.dataset.j);
+const c=e.target.closest('[data-ch]');if(c&&$('#bet'))$('#bet').value=c.dataset.ch==='Tudo'?saldo:c.dataset.ch;
+const m=e.target.closest('[data-m]');if(m&&!busy){P[cur].s=saldo;modo=+m.dataset.m;if(modo===1)cur=0;saldo=P[cur].s;salvar();home()}});
+salvar();abrir(null);
+</script>
+</body>
+</html>
